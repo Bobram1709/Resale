@@ -12,7 +12,7 @@ export const PEACH_PLANS = {
     amountCents: 29900,
     interval: "month" as const,
     label: "Monthly",
-    price: "R299/mo",
+    price: "Rs.299/mo",
     description: "Resale Vendor Subscription - Monthly Plan",
   },
   yearly: {
@@ -20,7 +20,7 @@ export const PEACH_PLANS = {
     amountCents: 299900,
     interval: "year" as const,
     label: "Yearly",
-    price: "R2,999/yr",
+    price: "Rs.2,999/yr",
     description: "Resale Vendor Subscription - Yearly Plan",
   },
 };
@@ -49,13 +49,13 @@ export async function createCheckoutSession({
       entityId: PEACH_ENTITY_ID,
     },
     amount: selectedPlan.amount,
-    currency: "ZAR",
+    currency: "MUR",
     paymentType: "DB",
     merchantTransactionId,
     billing: {
       street1: "",
       city: "",
-      country: "ZA",
+      country: "MU",
     },
     customer: {
       email: vendorEmail,
