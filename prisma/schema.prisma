@@ -34,12 +34,12 @@ model VendorProfile {
   description          String?
   logoUrl              String?
   location             String?
-  subscriptionStatus   SubscriptionStatus @default(INACTIVE)
-  subscriptionPlan     String?
-  stripeCustomerId     String?
-  stripeSubscriptionId String?
-  subscriptionEndsAt   DateTime?
-  createdAt            DateTime           @default(now())
+  subscriptionStatus      SubscriptionStatus @default(INACTIVE)
+  subscriptionPlan        String?
+  peachRegistrationId     String?
+  peachMerchantTransId    String?
+  subscriptionEndsAt      DateTime?
+  createdAt               DateTime           @default(now())
 
   products      Product[]
   conversations Conversation[] @relation("VendorConversations")
