@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
       line_items: [
         {
           price_data: {
-            currency: "usd",
+            currency: "mur",
             product_data: {
               name: `Resale Vendor Subscription - ${selectedPlan.label}`,
               description: "Activate your vendor store and publish products",

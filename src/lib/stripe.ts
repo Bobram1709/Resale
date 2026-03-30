@@ -10,13 +10,13 @@ export const STRIPE_PLANS = {
     amount: 2999,
     interval: "month" as const,
     label: "Monthly",
-    price: "$29.99/mo",
+    price: "Rs.299/mo",
   },
   yearly: {
     priceId: process.env.STRIPE_YEARLY_PRICE_ID!,
     amount: 29900,
     interval: "year" as const,
     label: "Yearly",
-    price: "$299/yr",
+    price: "Rs.2,999/yr",
   },
 };
