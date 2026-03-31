@@ -42,7 +42,7 @@ export default async function HomePage() {
             </div>
           </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
-            South Africa&apos;s Marketplace
+            Mauritius&apos;s Marketplace
             <br />
             <span className="text-blue-200">for Independent Vendors</span>
           </h1>
@@ -91,7 +91,7 @@ export default async function HomePage() {
               </div>
               <h3 className="font-bold text-gray-900 text-lg mb-2">Local Vendors</h3>
               <p className="text-gray-500 text-sm leading-relaxed">
-                Discover and support South African independent sellers with unique, quality products.
+                Discover and support Mauritian independent sellers with unique, quality products.
               </p>
             </div>
             <div className="text-center p-6">
@@ -109,7 +109,7 @@ export default async function HomePage() {
               </div>
               <h3 className="font-bold text-gray-900 text-lg mb-2">Secure Payments</h3>
               <p className="text-gray-500 text-sm leading-relaxed">
-                Vendor subscriptions powered by Peach Payments — South Africa&apos;s trusted payment gateway.
+                Vendor subscriptions powered by Peach Payments — Mauritius&apos;s trusted payment gateway.
               </p>
             </div>
           </div>
@@ -154,7 +154,7 @@ export default async function HomePage() {
                         {product.name}
                       </h3>
                       <p className="text-base font-bold text-blue-600 mt-1">
-                        R{product.price.toFixed(2)}
+                        Rs.{product.price.toFixed(2)}
                       </p>
                       {product.vendor && (
                         <p className="text-xs text-gray-400 mt-1 truncate">{product.vendor.shopName}</p>

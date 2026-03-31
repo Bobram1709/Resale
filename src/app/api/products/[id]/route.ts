@@ -1,41 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { z } from "zod";
 
-const productSchema = z.object({
-  name: z.string().min(1).optional(),
-  description: z.string().min(1).optional(),
-  price: z.number().positive().optional(),
-  imageUrl: z.string().url().optional().or(z.literal("")).nullable(),
-  category: z.string().min(1).optional(),
-  stock: z.number().int().min(0).optional(),
-  isPublished: z.boolean().optional(),
-});
-
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
-  const product = await db.product.findUnique({
-    where: { id },
-    include: {
-      vendor: {
-        include: {
-          user: {
-            select: { name: true, email: true },
-          },
-        },
-      },
-    },
-  });
-
-  if (!product) {
-    return NextResponse.json({ error: "Product not found" }, { status: 404 });
-  }
-
-  return NextResponse.json(product);
+async function getVendorProduct(productId: string, userId: string) {
+  const vendorProfile = await db.vendorProfile.findUnique({ where: { userId } });
+  if (!vendorProfile) return null;
+  const product = await db.product.findUnique({ where: { id: productId } });
+  if (!product || product.vendorId !== vendorProfile.id) return null;
+  return { product, vendorProfile };
 }
 
 export async function PUT(
@@ -43,61 +15,58 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
-  const { id } = await params;
-
-  if (!session?.user) {
+  if (!session?.user || session.user.role !== "VENDOR") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const { id } = await params;
+  const result = await getVendorProduct(id, session.user.id);
+  if (!result) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const product = await db.product.findUnique({
+  const body = await req.json();
+  const { name, description, price, imageUrl, category, stock } = body;
+
+  if (!name || !description || price === undefined || !category) {
+    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  }
+
+  const updated = await db.product.update({
     where: { id },
-    include: { vendor: true },
+    data: {
+      name: String(name),
+      description: String(description),
+      price: Number(price),
+      imageUrl: imageUrl ? String(imageUrl) : null,
+      category: String(category),
+      stock: Number(stock) || 0,
+    },
   });
+  return NextResponse.json(updated);
+}
 
-  if (!product) {
-    return NextResponse.json({ error: "Product not found" }, { status: 404 });
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await auth();
+  if (!session?.user || session.user.role !== "VENDOR") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  const { id } = await params;
+  const result = await getVendorProduct(id, session.user.id);
+  if (!result) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const body = await req.json();
+
+  // Check subscription before publishing
+  if (body.isPublished === true && result.vendorProfile.subscriptionStatus !== "ACTIVE") {
+    return NextResponse.json({ error: "Active subscription required" }, { status: 403 });
   }
 
-  // Only the owner vendor or admin can update
-  if (
-    session.user.role !== "ADMIN" &&
-    product.vendor.userId !== session.user.id
-  ) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
-
-  try {
-    const body = await req.json();
-    const data = productSchema.parse(body);
-
-    // Only allow publishing if subscription is active
-    let isPublished = data.isPublished;
-    if (isPublished && product.vendor.subscriptionStatus !== "ACTIVE") {
-      isPublished = false;
-    }
-
-    const updated = await db.product.update({
-      where: { id },
-      data: {
-        ...data,
-        ...(isPublished !== undefined && { isPublished }),
-      },
-    });
-
-    return NextResponse.json(updated);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Invalid input", details: error.errors },
-        { status: 400 }
-      );
-    }
-    console.error("Product update error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
-  }
+  const updated = await db.product.update({
+    where: { id },
+    data: { isPublished: Boolean(body.isPublished) },
+  });
+  return NextResponse.json(updated);
 }
 
 export async function DELETE(
@@ -105,29 +74,13 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await auth();
-  const { id } = await params;
-
-  if (!session?.user) {
+  if (!session?.user || session.user.role !== "VENDOR") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  const product = await db.product.findUnique({
-    where: { id },
-    include: { vendor: true },
-  });
-
-  if (!product) {
-    return NextResponse.json({ error: "Product not found" }, { status: 404 });
-  }
-
-  if (
-    session.user.role !== "ADMIN" &&
-    product.vendor.userId !== session.user.id
-  ) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  }
+  const { id } = await params;
+  const result = await getVendorProduct(id, session.user.id);
+  if (!result) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   await db.product.delete({ where: { id } });
-
   return NextResponse.json({ success: true });
 }

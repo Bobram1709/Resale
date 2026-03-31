@@ -47,7 +47,7 @@ export default function SubscriptionCard() {
         <div className="mb-4">
           <h3 className="text-lg font-bold text-gray-900">Monthly</h3>
           <div className="mt-2">
-            <span className="text-4xl font-bold text-gray-900">R299</span>
+            <span className="text-4xl font-bold text-gray-900">Rs.299</span>
             <span className="text-gray-500 ml-1">/mo</span>
           </div>
           <p className="text-sm text-gray-500 mt-1">Billed monthly, cancel anytime</p>
@@ -85,10 +85,10 @@ export default function SubscriptionCard() {
         <div className="relative mb-4">
           <h3 className="text-lg font-bold text-white">Yearly</h3>
           <div className="mt-2">
-            <span className="text-4xl font-bold text-white">R2,999</span>
+            <span className="text-4xl font-bold text-white">Rs.2,999</span>
             <span className="text-blue-200 ml-1">/yr</span>
           </div>
-          <p className="text-blue-200 text-sm mt-1">Save R588 vs monthly</p>
+          <p className="text-blue-200 text-sm mt-1">Save Rs.588 vs monthly</p>
         </div>
 
         <ul className="space-y-2 mb-6 relative">

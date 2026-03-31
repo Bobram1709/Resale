@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ShoppingBag, Twitter, Instagram, Facebook } from "lucide-react";
+import { ShoppingBag, Globe, Mail, Phone } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -18,9 +18,9 @@ export default function Footer() {
               The marketplace for independent vendors. Buy and sell unique products, connect directly with sellers.
             </p>
             <div className="flex gap-4 mt-4">
-              <a href="#" className="hover:text-white transition-colors"><Twitter className="w-5 h-5" /></a>
-              <a href="#" className="hover:text-white transition-colors"><Instagram className="w-5 h-5" /></a>
-              <a href="#" className="hover:text-white transition-colors"><Facebook className="w-5 h-5" /></a>
+              <a href="#" className="hover:text-white transition-colors"><Globe className="w-5 h-5" /></a>
+              <a href="#" className="hover:text-white transition-colors"><Mail className="w-5 h-5" /></a>
+              <a href="#" className="hover:text-white transition-colors"><Phone className="w-5 h-5" /></a>
             </div>
           </div>
 
